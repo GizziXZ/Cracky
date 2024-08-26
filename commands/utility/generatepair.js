@@ -30,7 +30,11 @@ module.exports = {
             if (!userStorage) {
                 userStorage = {};
             }
-            userStorage[name] = privateKey;
+            if (!userStorage[name]) {
+                userStorage[name] = {};
+            }
+            userStorage[name].private = privateKey;
+            userStorage[name].public = publicKey;
             await localStorage.setItem(interaction.user.id, userStorage);
 
             const publicKeyFile = new AttachmentBuilder(Buffer.from(publicKey, 'ascii'), {name: 'publickey.asc'});
