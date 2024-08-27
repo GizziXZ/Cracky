@@ -21,11 +21,22 @@ module.exports = {
             const privateKeyFile = interaction.options.getAttachment('privatekeyfile');
             let privateKeyArmored = interaction.options.getString('privatekey');
 
+            if (name && await localStorage.getItem(interaction.user.id)) {
+                const userStorage = await localStorage.getItem(interaction.user.id);
+                if (userStorage[name]) {
+                    privateKeyArmored = await openpgp.readPrivateKey({ armoredKey: userStorage[name].private });
+                } else {
+                    return interaction.editReply({ content: `No key pair with name \`${name}\` found` });
+                }
+            } else if (name && !localStorage.getItem(interaction.user.id)) {
+                return interaction.editReply({ content: 'No key pairs found with that name' });
+            }
+
             if (privateKeyFile) {
                 const response = await fetch(privateKeyFile.url);
                 privateKeyArmored = await response.text();
                 privateKeyArmored = await openpgp.readPrivateKey({ armoredKey: privateKeyArmored });
-            } else if (!privateKeyFile) {
+            } else if (!privateKeyFile && !name && privateKeyArmored) {
                 privateKeyArmored = `-----BEGIN PGP PRIVATE KEY BLOCK-----\n\n${privateKeyArmored}\n-----END PGP PRIVATE KEY BLOCK-----`;
             }
 
@@ -34,8 +45,8 @@ module.exports = {
             }
 
             const privatekey = await openpgp.decryptKey({
-                privateKey: privateKeyArmored,
-                passphrase: interaction.options.getString('passphrase')
+                passphrase: interaction.options.getString('passphrase'),
+                privateKey: privateKeyArmored
             });
             const signed = await openpgp.sign({
                 message: await openpgp.createCleartextMessage({ text: message }), // using cleartext message as we are signing a message not encrypting

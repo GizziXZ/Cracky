@@ -7,7 +7,7 @@ module.exports = {
         .setName('encrypt')
         .setDescription('Encrypt a message using a public key')
         .addStringOption(option => option.setName('message').setDescription('The message to encrypt').setRequired(true))
-        .addStringOption(option => option.setName('name').setDescription('Name of the (saved) key pair to use').setRequired(false))
+        .addStringOption(option => option.setName('name').setDescription('Name of the (saved) key to use').setRequired(false))
         .addStringOption(option => option.setName('publickey').setDescription('Public key to encrypt with (armor with no headers or footers)').setRequired(false))
         .addAttachmentOption(option => option.setName('publickeyfile').setDescription('A file containing the exported armor public key').setRequired(false))
         .addBooleanOption(option => option.setName('ephemeral').setDescription('Whether to show the result only to you').setRequired(false)),
