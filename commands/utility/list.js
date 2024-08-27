@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, AttachmentBuilder } = require('discord.js');
-const openpgp = require('openpgp');
 const localStorage = require('node-persist');
 
 module.exports = {
