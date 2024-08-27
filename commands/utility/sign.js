@@ -1,4 +1,5 @@
 const { SlashCommandBuilder } = require('discord.js');
+const localStorage = require('node-persist');
 const openpgp = require('openpgp');
 
 module.exports = {
@@ -7,12 +8,15 @@ module.exports = {
         .setDescription('Sign a message using a private key')
         .addStringOption(option => option.setName('passphrase').setDescription('Passphrase for the private key').setRequired(true))
         .addStringOption(option => option.setName('message').setDescription('The message to sign').setRequired(true))
+        .addStringOption(option => option.setName('name').setDescription('Name of the (saved) key pair to use').setRequired(false))
         .addStringOption(option => option.setName('privatekey').setDescription('Private key to sign with (armor without headers or footers)').setRequired(false))
         .addAttachmentOption(option => option.setName('privatekeyfile').setDescription('A file containing the exported armor private key').setRequired(false))
         .addBooleanOption(option => option.setName('ephemeral').setDescription('Whether to show the result only to you').setRequired(false)),
     async execute(interaction) {
         try {
             await interaction.deferReply({ ephemeral: !!interaction.options.getBoolean('ephemeral') });
+            await localStorage.init();
+            const name = interaction.options.getString('name');
             const message = interaction.options.getString('message');
             const privateKeyFile = interaction.options.getAttachment('privatekeyfile');
             let privateKeyArmored = interaction.options.getString('privatekey');

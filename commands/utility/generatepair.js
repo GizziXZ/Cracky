@@ -37,8 +37,8 @@ module.exports = {
             userStorage[name].public = publicKey;
             await localStorage.setItem(interaction.user.id, userStorage);
 
-            const publicKeyFile = new AttachmentBuilder(Buffer.from(publicKey, 'ascii'), {name: 'publickey.asc'});
-            const privateKeyFile = new AttachmentBuilder(Buffer.from(privateKey, 'ascii'), {name: 'privatekey.asc'});
+            const publicKeyFile = new AttachmentBuilder(Buffer.from(publicKey, 'ascii'), {name: `${name} public.asc`});
+            const privateKeyFile = new AttachmentBuilder(Buffer.from(privateKey, 'ascii'), {name: `${name} private.asc`});
             await interaction.editReply({ content: 'Here are your keys:', files: [privateKeyFile, publicKeyFile] });
         } catch (error) {
             console.error(error);
